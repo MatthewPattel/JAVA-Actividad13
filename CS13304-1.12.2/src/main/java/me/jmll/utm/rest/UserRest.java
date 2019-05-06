@@ -45,6 +45,17 @@ public class UserRest {
 	@ResponseStatus(HttpStatus.OK)
 	public Map<String, Object> getUsersJSON() {
 		// Escribe tu código aquí {
+		ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentServletMapping();
+		List<Link> links = new ArrayList<Link>();
+		links.add(new Link(builder.path("/").build().toString(), "api"));
+		links.add(new Link(builder.path("/user/").build().toString(), "self"));
+		
+		List<Link> data = new ArrayList<Link>();
+		userService.getUsers().forEach(user -> data.add(new Link(ServletUriComponentsBuilder.fromCurrentContextPath())));
+		
+		Map<String, Object> response = new Hashtable<>(2);
+		response.put("_links", links);
+		response.put("data", data);
 		
 		// }
 		return response;
@@ -62,7 +73,11 @@ public class UserRest {
 	@ResponseStatus(HttpStatus.OK)
 	public UserLinkListResource getUsersXML() {
 		// Escribe tu código aquí {
-		
+		ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentServletMapping();
+		UserLinkListResource userLinksResource = new UserLinkListResource();
+		userLinksResource.addLink(new Link(builder.path("/").build().toString(), "api"));
+		userLinksResource.addLink(new Link(builder.path("/user/").build().toString(), "self"));
+		userService.getUsers().forEach(user -> userLinksResource.addUserLink(new Link(ServletUriComponentsBuilder.fromCurrentContextPath())));
 		// }
 		return userLinksResource;
 	}
@@ -78,7 +93,14 @@ public class UserRest {
 	@ResponseStatus(HttpStatus.OK)
 	public Map<String, Object> getUserJSON(@PathVariable("username") String username) {
 		// Escribe tu código aquí {
-
+		ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentServletMapping();
+		List<Link> links = new ArrayList<Link>();
+		links.add(new Link(builder.path("/user/").build().toString(), "user"));
+		links.add(new Link(builder.path(username).build().toString(), "self"));
+		
+		Map<String, Object> response = new Hashtable<>(2);
+		response.put("_links", links);
+		response.put("data", userService.getUser(username));
 		// }
 		return response;
 	}
@@ -94,7 +116,11 @@ public class UserRest {
 	@ResponseStatus(HttpStatus.OK)
 	public UserResource getUserXML(@PathVariable("username") String username) {
 		// Escribe tu código aquí {
-		
+		ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentServletMapping();
+		UserResource resource = new UserResource();
+		resource.addLink(new Link(builder.path("/user/").build().toString(), "user"));
+		resource.addLink(new Link(builder.path(username).build().toString(), "self"));
+		resource.setUser(userService.getUser(username));
 		// }
 		return resource;
 	}

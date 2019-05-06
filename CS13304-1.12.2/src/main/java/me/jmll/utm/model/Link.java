@@ -2,10 +2,12 @@ package me.jmll.utm.model;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 public class Link {
 	private String href;
 	private String rel;
-	public Link(){
+	public Link(ServletUriComponentsBuilder servletUriComponentsBuilder){
 	}
 	
 	public Link(String href, String rel) {
